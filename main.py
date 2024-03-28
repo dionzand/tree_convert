@@ -59,12 +59,14 @@ for hg in isogg_hg_yfull_snps:
         if path == isogg_path[:len(path)]:
             st.success(f"ISOGG resolution is {len(isogg_path) - len(path)} levels higher")
         else:
-            st.error("Paths do not match")
+            lowest_common_ancestor = nx.lowest_common_ancestor(isogg_tree, path[-1], isogg_path[-1])
+            st.error(f"Paths do not match. Lowest common ancestor is {lowest_common_ancestor}.")
     elif len(path) > len(isogg_path):
         if isogg_path == path[:len(isogg_path)]:
             st.success(f"YFull resolution is {len(path) - len(isogg_path)} levels higher")
         else:
-            st.error("Paths do not match")
+            lowest_common_ancestor = nx.lowest_common_ancestor(isogg_tree, path[-1], isogg_path[-1])
+            st.error(f"Paths do not match. Lowest common ancestor is {lowest_common_ancestor}.")
 
 st.header("YFull resolution")
 for hg in yfull_hg_isogg_snps:
@@ -76,12 +78,14 @@ for hg in yfull_hg_isogg_snps:
         if path == yfull_path[:len(path)]:
             st.success(f"YFull resolution is {len(yfull_path) - len(path)} levels higher")
         else:
-            st.error("Paths do not match")
+            lowest_common_ancestor = nx.lowest_common_ancestor(yfull_tree, path[-1], yfull_path[-1])
+            st.error(f"Paths do not match. Lowest common ancestor is {lowest_common_ancestor}.")
     elif len(path) > len(yfull_path):
         if yfull_path == path[:len(yfull_path)]:
             st.success(f"ISOGG resolution is {len(path) - len(yfull_path)} levels higher")
         else:
-            st.error("Paths do not match")
+            lowest_common_ancestor = nx.lowest_common_ancestor(yfull_tree, path[-1], yfull_path[-1])
+            st.error(f"Paths do not match. Lowest common ancestor is {lowest_common_ancestor}.")
 
 st.header("Paths")
 st.write(f"Yfull path is:")
