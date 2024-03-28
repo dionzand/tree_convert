@@ -49,7 +49,7 @@ yfull_identifying_snps = [i for i in yfull_hg_to_snp_dict.get(yfull) if i in iso
 yfull_hg_isogg_snps = Counter([i for snp in isogg_identifying_snps for i in yfull_snp_to_hg_dict[snp]])
 isogg_hg_yfull_snps = Counter([i for snp in yfull_identifying_snps for i in isogg_snp_to_hg_dict[snp]])
 
-st.header("Resolution")
+st.header("ISOGG resolution")
 for hg in isogg_hg_yfull_snps:
     st.write(f"Comparing Yfull based ISOGG haplogroup {hg} ({int(isogg_hg_yfull_snps[hg]/sum(isogg_hg_yfull_snps.values())*100)}%) to real ISOGG haplogroup {isogg}:")
     path = get_path_to_root(isogg_tree, hg)
@@ -63,6 +63,23 @@ for hg in isogg_hg_yfull_snps:
     elif len(path) > len(isogg_path):
         if isogg_path == path[:len(isogg_path)]:
             st.success(f"YFull resolution is {len(path) - len(isogg_path)} levels higher")
+        else:
+            st.error("Paths do not match")
+
+st.header("YFull resolution")
+for hg in yfull_hg_isogg_snps:
+    st.write(f"Comparing ISOGG based YFull haplogroup {hg} ({int(yfull_hg_isogg_snps[hg]/sum(yfull_hg_isogg_snps.values())*100)}%) to real YFull haplogroup {yfull}:")
+    path = get_path_to_root(yfull_tree, hg)
+    if path == yfull_path:
+        st.warning("Resolutions are the same")
+    elif len(path) < len(yfull_path):
+        if path == yfull_path[:len(path)]:
+            st.success(f"YFull resolution is {len(yfull_path) - len(path)} levels higher")
+        else:
+            st.error("Paths do not match")
+    elif len(path) > len(yfull_path):
+        if yfull_path == path[:len(yfull_path)]:
+            st.success(f"ISOGG resolution is {len(path) - len(yfull_path)} levels higher")
         else:
             st.error("Paths do not match")
 
