@@ -11,7 +11,7 @@ yfull_hg_to_snp_dict = {}
 # convert to dict where key is Name and value is Subgroup Name
 for index, row in yfull_snps.iterrows():
     snp = row["name"].replace("^", "").replace("^^", "")
-    hg = row["name.1"]
+    hg = row["hg_name"]
     if hg not in yfull_hg_to_snp_dict:
         yfull_hg_to_snp_dict[hg] = [snp]
     else:
