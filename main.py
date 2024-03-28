@@ -50,6 +50,7 @@ yfull_hg_isogg_snps = Counter([i for snp in isogg_identifying_snps for i in yful
 isogg_hg_yfull_snps = Counter([i for snp in yfull_identifying_snps for i in isogg_snp_to_hg_dict[snp]])
 
 st.header("ISOGG resolution")
+st.write(f"**There are {len(isogg_hg_yfull_snps)} ISOGG haplogroups that correspond to these YFull SNPs:**")
 for hg in isogg_hg_yfull_snps:
     st.write(f"Comparing Yfull based ISOGG haplogroup {hg} ({int(isogg_hg_yfull_snps[hg]/sum(isogg_hg_yfull_snps.values())*100)}%) to real ISOGG haplogroup {isogg}:")
     path = get_path_to_root(isogg_tree, hg)
@@ -69,6 +70,7 @@ for hg in isogg_hg_yfull_snps:
             st.error(f"Paths do not match. Lowest common ancestor is {lowest_common_ancestor}.")
 
 st.header("YFull resolution")
+st.write(f"**There are {len(yfull_hg_isogg_snps)} YFull haplogroups that correspond to these ISOGG SNPs:**")
 for hg in yfull_hg_isogg_snps:
     st.write(f"Comparing ISOGG based YFull haplogroup {hg} ({int(yfull_hg_isogg_snps[hg]/sum(yfull_hg_isogg_snps.values())*100)}%) to real YFull haplogroup {yfull}:")
     path = get_path_to_root(yfull_tree, hg)
