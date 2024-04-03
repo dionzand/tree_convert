@@ -133,11 +133,11 @@ if run_button:
             st.error(f"These ISOGG SNPs are not present in YFull: {', '.join(isogg_missing_snps)}")
 
         st.header("Haplogroups")
-        st.write("ISOGG haplogroups for these Yfull SNPs are")
+        st.write("**ISOGG haplogroups for these Yfull SNPs are:**")
         for hg, count in isogg_hg_yfull_snps.items():
             st.write(f"{hg}: {count} ({int(count / sum(isogg_hg_yfull_snps.values()) * 100)}%)")
 
-        st.write("YFull haplogroups for these ISOGG SNPs are:")
+        st.write("\n**YFull haplogroups for these ISOGG SNPs are:**")
         for hg, count in yfull_hg_isogg_snps.items():
             st.write(f"{hg}: {count} ({int(count / sum(yfull_hg_isogg_snps.values()) * 100)}%)")
 
