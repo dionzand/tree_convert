@@ -43,11 +43,22 @@ if "*" in yfull:
 isogg_path = get_path_to_root(isogg_tree, isogg)
 yfull_path = get_path_to_root(yfull_tree, yfull)
 
-isogg_identifying_snps = [i for i in isogg_hg_to_snp_dict.get(isogg)] # if i in yfull_snp_to_hg_dict
-yfull_identifying_snps = [i for i in yfull_hg_to_snp_dict.get(yfull)] # if i in isogg_snp_to_hg_dict
+isogg_identifying_snps = [i for i in isogg_hg_to_snp_dict.get(isogg)]  # if i in yfull_snp_to_hg_dict
+yfull_identifying_snps = [i for i in yfull_hg_to_snp_dict.get(yfull)]  # if i in isogg_snp_to_hg_dict
 
-yfull_hg_isogg_snps = Counter([i for snp in isogg_identifying_snps for i in yfull_snp_to_hg_dict[snp]])
-isogg_hg_yfull_snps = Counter([i for snp in yfull_identifying_snps for i in isogg_snp_to_hg_dict[snp]])
+isogg_missing_snps = [i for i in isogg_identifying_snps if i not in yfull_snp_to_hg_dict]
+yfull_missing_snps = [i for i in yfull_identifying_snps if i not in isogg_snp_to_hg_dict]
+
+if len(isogg_missing_snps) > 0:
+    st.error(f"These ISOGG SNPs are not present in YFull: {', '.join(isogg_missing_snps)}")
+if len(yfull_missing_snps) > 0:
+    st.error(f"These YFull SNPs are not present in ISOGG: {', '.join(yfull_missing_snps)}")
+
+isogg_present_snps = [i for i in isogg_identifying_snps if i in yfull_snp_to_hg_dict]
+yfull_present_snps = [i for i in yfull_identifying_snps if i in isogg_snp_to_hg_dict]
+
+yfull_hg_isogg_snps = Counter([i for snp in isogg_present_snps for i in yfull_snp_to_hg_dict[snp]])
+isogg_hg_yfull_snps = Counter([i for snp in yfull_present_snps for i in isogg_snp_to_hg_dict[snp]])
 
 st.header("ISOGG resolution")
 st.write(f"**There are {len(isogg_hg_yfull_snps)} ISOGG haplogroups that correspond to these YFull SNPs:**")
