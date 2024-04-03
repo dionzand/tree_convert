@@ -149,6 +149,9 @@ if __name__ == '__main__':
                            help="Input file with haplogroups to compare (in CSV format, "
                                 "with three columns: Sample, ISOGG_hg, YFull_hg)",
                            required=True)
+    argparser.add_argument("--output",
+                           help="Output file for results (in CSV format)",
+                           default="results.csv")
     args = argparser.parse_args()
 
     input_csv = pd.read_csv(args.input, names=["Sample", "ISOGG_hg", "YFull_hg"], header=0)
@@ -160,4 +163,4 @@ if __name__ == '__main__':
         results_list.append(result)
 
     results_df = pd.DataFrame(results_list)
-    results_df.to_csv("results.csv", index=False)
+    results_df.to_csv(args.output, index=False)
