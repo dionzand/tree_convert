@@ -48,6 +48,7 @@ Lastly it uses `isogg_snp_to_hg_dict` and `yfull_snp_to_hg_dict` to convert the 
 It then indicated if one of the two trees has a higher resolution, if they have the same resolution, or if the paths do not correspond.
 
 **FAQ**
+
 __Why do isogg_resolution and yfull_resolution not give the same results?__
 Often, the isogg_resolution and yfull_resolution do not give the same result. This is expected. For instance, the yfull_resolution says the resolutions are the same, while the isogg_resolution indicates that YFull resolution is 1 level higher. This only means that the inferred YFull haplogroup - based on the ISOGG identifying SNPs - is the same as the true YFull haplogroup, but that the inferred ISOGG haplogroup - based on the YFull identifying SNPs - has one level higher resolution than the true ISOGG haplogroup. It is therefore important to check both columns for the true resolution difference.
 
