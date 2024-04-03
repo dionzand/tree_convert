@@ -2,6 +2,7 @@
 
 Tree Convert is a tool for converting ISOGG to YFull nomenclature, and vice versa.
 For individual comparisons you can use the Streamlit GUI (main.py) which also runs at https://treeconvert.streamlit.app/.
+
 For batch operations you can use treecompare.py. This only requires one input file, a CSV file with three columns: Sample, ISOGG_hg, YFull_hg.
 
 **Installing**
@@ -11,12 +12,15 @@ Clone this repository and create a virtual environment. Install the packages in 
 **Run Streamlit locally**
 
 If you want to run the Streamlit GUI locally, just run the following command inside your virtual environment:
+
 `streamlit run main.py`
 
 **Run batch tool**
 
 To run the batch function, just run the following command inside your virtual environment:
+
 `python treecompare.py --input input_file.csv --output output_file.csv`
+
 Replace `input_file.csv` and `output_file.csv` with your files.
 
 The batch tools outputs a csv file with the following columns:
