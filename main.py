@@ -59,16 +59,11 @@ if run_button:
         isogg_path = get_path_to_root(isogg_tree, isogg)
         yfull_path = get_path_to_root(yfull_tree, yfull)
 
-        isogg_identifying_snps = [i for i in isogg_hg_to_snp_dict.get(isogg)]  # if i in yfull_snp_to_hg_dict
-        yfull_identifying_snps = [i for i in yfull_hg_to_snp_dict.get(yfull)]  # if i in isogg_snp_to_hg_dict
+        isogg_identifying_snps = [i for i in isogg_hg_to_snp_dict.get(isogg)]
+        yfull_identifying_snps = [i for i in yfull_hg_to_snp_dict.get(yfull)]
 
         isogg_missing_snps = [i for i in isogg_identifying_snps if i not in yfull_snp_to_hg_dict]
         yfull_missing_snps = [i for i in yfull_identifying_snps if i not in isogg_snp_to_hg_dict]
-
-        if len(isogg_missing_snps) > 0:
-            st.error(f"These ISOGG SNPs are not present in YFull: {', '.join(isogg_missing_snps)}")
-        if len(yfull_missing_snps) > 0:
-            st.error(f"These YFull SNPs are not present in ISOGG: {', '.join(yfull_missing_snps)}")
 
         isogg_present_snps = [i for i in isogg_identifying_snps if i in yfull_snp_to_hg_dict]
         yfull_present_snps = [i for i in yfull_identifying_snps if i in isogg_snp_to_hg_dict]
@@ -79,7 +74,8 @@ if run_button:
         st.header("ISOGG resolution")
         st.write(f"**There are {len(isogg_hg_yfull_snps)} ISOGG haplogroups that correspond to these YFull SNPs:**")
         for hg in isogg_hg_yfull_snps:
-            st.write(f"Comparing Yfull based ISOGG haplogroup {hg} ({int(isogg_hg_yfull_snps[hg]/sum(isogg_hg_yfull_snps.values())*100)}%) to real ISOGG haplogroup {isogg}:")
+            st.write(
+                f"Comparing Yfull based ISOGG haplogroup {hg} ({int(isogg_hg_yfull_snps[hg] / sum(isogg_hg_yfull_snps.values()) * 100)}%) to real ISOGG haplogroup {isogg}:")
             path = get_path_to_root(isogg_tree, hg)
             if path == isogg_path:
                 st.warning("Resolutions are the same")
@@ -99,7 +95,8 @@ if run_button:
         st.header("YFull resolution")
         st.write(f"**There are {len(yfull_hg_isogg_snps)} YFull haplogroups that correspond to these ISOGG SNPs:**")
         for hg in yfull_hg_isogg_snps:
-            st.write(f"Comparing ISOGG based YFull haplogroup {hg} ({int(yfull_hg_isogg_snps[hg]/sum(yfull_hg_isogg_snps.values())*100)}%) to real YFull haplogroup {yfull}:")
+            st.write(
+                f"Comparing ISOGG based YFull haplogroup {hg} ({int(yfull_hg_isogg_snps[hg] / sum(yfull_hg_isogg_snps.values()) * 100)}%) to real YFull haplogroup {yfull}:")
             path = get_path_to_root(yfull_tree, hg)
             if path == yfull_path:
                 st.warning("Resolutions are the same")
@@ -125,14 +122,27 @@ if run_button:
         st.header("Identifying SNPs")
         st.write(f"Identifying SNPs for Yfull {yfull} are:")
         st.info(', '.join(yfull_identifying_snps))
+
+        if len(yfull_missing_snps) > 0:
+            st.error(f"These YFull SNPs are not present in ISOGG: {', '.join(yfull_missing_snps)}")
+
         st.write(f"Identifying SNPs for ISOGG {isogg} are:")
         st.info(', '.join(isogg_identifying_snps))
 
+        if len(isogg_missing_snps) > 0:
+            st.error(f"These ISOGG SNPs are not present in YFull: {', '.join(isogg_missing_snps)}")
+
         st.header("Haplogroups")
-        st.write(f"ISOGG haplogroups for these Yfull SNPs are: {isogg_hg_yfull_snps}")
-        st.write(f"YFull haplogroups for these ISOGG SNPs are: {yfull_hg_isogg_snps}")
+        st.write("ISOGG haplogroups for these Yfull SNPs are")
+        for hg, count in isogg_hg_yfull_snps.items():
+            st.write(f"{hg}: {count} ({int(count / sum(isogg_hg_yfull_snps.values()) * 100)}%)")
+
+        st.write("YFull haplogroups for these ISOGG SNPs are:")
+        for hg, count in yfull_hg_isogg_snps.items():
+            st.write(f"{hg}: {count} ({int(count / sum(yfull_hg_isogg_snps.values()) * 100)}%)")
 
         st.header("Info")
-        st.info("The resolution of the real ISOGG haplogroup is compared to the resolution of the YFull haplogroup based on ISOGGs identifying SNPs. "
-                "The percentage of each haplogroup is based on the number of identifying SNPs that support this haplogroup. "
-                "Asterisks (*) are currently ignored for comparison.")
+        st.info(
+            "The resolution of the real ISOGG haplogroup is compared to the resolution of the YFull haplogroup based on ISOGGs identifying SNPs. "
+            "The percentage of each haplogroup is based on the number of identifying SNPs that support this haplogroup. "
+            "Asterisks (*) are currently ignored for comparison.")
