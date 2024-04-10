@@ -38,15 +38,16 @@ def get_identifying_snps_for_path(path, hg_to_snp_dict):
 def main_cli(sample, isogg, yfull):
     log = []
 
+    # TODO: Add exlusion of * from haplogroups
     if "*" in isogg:
         isogg = isogg.split("*")[0]
     if "*" in yfull:
         yfull = yfull.split("*")[0]
 
     if isogg not in isogg_hg_to_snp_dict:
-        log.append(f"ISOGG haplogroup {isogg} not found")
+        log.append(f"No known SNPs for ISOGG haplogroup {isogg}")
     if yfull not in yfull_hg_to_snp_dict:
-        log.append(f"YFull haplogroup {yfull} not found")
+        log.append(f"No known SNPs for YFull haplogroup {yfull}")
 
     if isogg not in isogg_hg_to_snp_dict or yfull not in yfull_hg_to_snp_dict:
         return {
@@ -72,54 +73,69 @@ def main_cli(sample, isogg, yfull):
         yfull_hg_isogg_snps = Counter([i for snp in isogg_present_snps for i in yfull_snp_to_hg_dict[snp]])
         isogg_hg_yfull_snps = Counter([i for snp in yfull_present_snps for i in isogg_snp_to_hg_dict[snp]])
 
-        highest_isogg_hg = max(isogg_hg_yfull_snps, key=isogg_hg_yfull_snps.get)
-        if list(isogg_hg_yfull_snps.values()).count(isogg_hg_yfull_snps[highest_isogg_hg]) > 1:
-            log.append(f"Warning: Multiple ISOGG haplogroups share the same highest value. Might be ambiguous.")
-            highest_isogg_hg = max([hg for hg in isogg_hg_yfull_snps if isogg_hg_yfull_snps[hg] == isogg_hg_yfull_snps[highest_isogg_hg]],
-                                   key=lambda hg: len(get_path_to_root(isogg_tree, hg)))
-        highest_isogg_hg_ratio = isogg_hg_yfull_snps[highest_isogg_hg] / sum(isogg_hg_yfull_snps.values())
-        highest_isogg_path = get_path_to_root(isogg_tree, highest_isogg_hg)
-        if highest_isogg_path == isogg_path:
-            isogg_resolution = "Resolutions are the same"
-        elif len(highest_isogg_path) < len(isogg_path):
-            if highest_isogg_path == isogg_path[:len(highest_isogg_path)]:
-                isogg_resolution = f"ISOGG resolution is {len(isogg_path) - len(highest_isogg_path)} levels higher"
+        if len(isogg_hg_yfull_snps) == 0:
+            log.append("No ISOGG haplogroups found for these YFull SNPs")
+            highest_isogg_hg = None
+            highest_isogg_hg_ratio = None
+            isogg_resolution = None
+        else:
+            highest_isogg_hg = max(isogg_hg_yfull_snps, key=isogg_hg_yfull_snps.get)
+            if list(isogg_hg_yfull_snps.values()).count(isogg_hg_yfull_snps[highest_isogg_hg]) > 1:
+                log.append(f"Warning: Multiple ISOGG haplogroups share the same highest value. Might be ambiguous.")
+                # If multiple haplogroups share the same highest value, choose the one with the longest path to the root
+                highest_isogg_hg = max([hg for hg in isogg_hg_yfull_snps if isogg_hg_yfull_snps[hg] == isogg_hg_yfull_snps[highest_isogg_hg]],
+                                       key=lambda hg: len(get_path_to_root(isogg_tree, hg)))
+            highest_isogg_hg_ratio = isogg_hg_yfull_snps[highest_isogg_hg] / sum(isogg_hg_yfull_snps.values())
+            highest_isogg_path = get_path_to_root(isogg_tree, highest_isogg_hg)
+            if highest_isogg_path == isogg_path:
+                isogg_resolution = "Resolutions are the same"
+            elif len(highest_isogg_path) < len(isogg_path):
+                if highest_isogg_path == isogg_path[:len(highest_isogg_path)]:
+                    isogg_resolution = f"ISOGG resolution is {len(isogg_path) - len(highest_isogg_path)} levels higher"
+                else:
+                    lowest_common_ancestor = nx.lowest_common_ancestor(isogg_tree, highest_isogg_path[-1], isogg_path[-1])
+                    isogg_resolution = f"Paths do not match. Lowest common ancestor is {lowest_common_ancestor}."
+            elif len(highest_isogg_path) > len(isogg_path):
+                if isogg_path == highest_isogg_path[:len(isogg_path)]:
+                    isogg_resolution = f"YFull resolution is {len(highest_isogg_path) - len(isogg_path)} levels higher"
+                else:
+                    lowest_common_ancestor = nx.lowest_common_ancestor(isogg_tree, highest_isogg_path[-1], isogg_path[-1])
+                    isogg_resolution = f"Paths do not match. Lowest common ancestor is {lowest_common_ancestor}."
             else:
                 lowest_common_ancestor = nx.lowest_common_ancestor(isogg_tree, highest_isogg_path[-1], isogg_path[-1])
                 isogg_resolution = f"Paths do not match. Lowest common ancestor is {lowest_common_ancestor}."
-        elif len(highest_isogg_path) > len(isogg_path):
-            if isogg_path == highest_isogg_path[:len(isogg_path)]:
-                isogg_resolution = f"YFull resolution is {len(highest_isogg_path) - len(isogg_path)} levels higher"
-            else:
-                lowest_common_ancestor = nx.lowest_common_ancestor(isogg_tree, highest_isogg_path[-1], isogg_path[-1])
-                isogg_resolution = f"Paths do not match. Lowest common ancestor is {lowest_common_ancestor}."
+
+        if len(yfull_hg_isogg_snps) == 0:
+            log.append("No YFull haplogroups found for these ISOGG SNPs")
+            highest_yfull_hg = None
+            highest_yfull_hg_ratio = None
+            yfull_resolution = None
         else:
-            isogg_resolution = "Cannot compare resolutions."
+            highest_yfull_hg = max(yfull_hg_isogg_snps, key=yfull_hg_isogg_snps.get)
+            if list(yfull_hg_isogg_snps.values()).count(yfull_hg_isogg_snps[highest_yfull_hg]) > 1:
+                log.append(f"Warning: Multiple YFull haplogroups share the same highest value. Might be ambiguous.")
+                highest_yfull_hg = max([hg for hg in yfull_hg_isogg_snps if yfull_hg_isogg_snps[hg] == yfull_hg_isogg_snps[highest_yfull_hg]],
+                                       key=lambda hg: len(get_path_to_root(yfull_tree, hg)))
+            highest_yfull_hg_ratio = yfull_hg_isogg_snps[highest_yfull_hg] / sum(yfull_hg_isogg_snps.values())
+            highest_yfull_path = get_path_to_root(yfull_tree, highest_yfull_hg)
 
-        highest_yfull_hg = max(yfull_hg_isogg_snps, key=yfull_hg_isogg_snps.get)
-        if list(yfull_hg_isogg_snps.values()).count(yfull_hg_isogg_snps[highest_yfull_hg]) > 1:
-            log.append(f"Warning: Multiple YFull haplogroups share the same highest value. Might be ambiguous.")
-            highest_yfull_hg = max([hg for hg in yfull_hg_isogg_snps if yfull_hg_isogg_snps[hg] == yfull_hg_isogg_snps[highest_yfull_hg]],
-                                   key=lambda hg: len(get_path_to_root(yfull_tree, hg)))
-        highest_yfull_hg_ratio = yfull_hg_isogg_snps[highest_yfull_hg] / sum(yfull_hg_isogg_snps.values())
-        highest_yfull_path = get_path_to_root(yfull_tree, highest_yfull_hg)
-
-        if highest_yfull_path == yfull_path:
-            yfull_resolution = "Resolutions are the same"
-        elif len(highest_yfull_path) < len(yfull_path):
-            if highest_yfull_path == yfull_path[:len(highest_yfull_path)]:
-                yfull_resolution = f"YFull resolution is {len(yfull_path) - len(highest_yfull_path)} levels higher"
+            if highest_yfull_path == yfull_path:
+                yfull_resolution = "Resolutions are the same"
+            elif len(highest_yfull_path) < len(yfull_path):
+                if highest_yfull_path == yfull_path[:len(highest_yfull_path)]:
+                    yfull_resolution = f"YFull resolution is {len(yfull_path) - len(highest_yfull_path)} levels higher"
+                else:
+                    lowest_common_ancestor = nx.lowest_common_ancestor(yfull_tree, highest_yfull_path[-1], yfull_path[-1])
+                    yfull_resolution = f"Paths do not match. Lowest common ancestor is {lowest_common_ancestor}."
+            elif len(highest_yfull_path) > len(yfull_path):
+                if yfull_path == highest_yfull_path[:len(yfull_path)]:
+                    yfull_resolution = f"ISOGG resolution is {len(highest_yfull_path) - len(yfull_path)} levels higher"
+                else:
+                    lowest_common_ancestor = nx.lowest_common_ancestor(yfull_tree, highest_yfull_path[-1], yfull_path[-1])
+                    yfull_resolution = f"Paths do not match. Lowest common ancestor is {lowest_common_ancestor}."
             else:
                 lowest_common_ancestor = nx.lowest_common_ancestor(yfull_tree, highest_yfull_path[-1], yfull_path[-1])
                 yfull_resolution = f"Paths do not match. Lowest common ancestor is {lowest_common_ancestor}."
-        elif len(highest_yfull_path) > len(yfull_path):
-            if yfull_path == highest_yfull_path[:len(yfull_path)]:
-                yfull_resolution = f"ISOGG resolution is {len(highest_yfull_path) - len(yfull_path)} levels higher"
-            else:
-                lowest_common_ancestor = nx.lowest_common_ancestor(yfull_tree, highest_yfull_path[-1], yfull_path[-1])
-                yfull_resolution = f"Paths do not match. Lowest common ancestor is {lowest_common_ancestor}."
-        else:
-            yfull_resolution = "Cannot compare resolutions."
 
         return {
             "sample": sample,
