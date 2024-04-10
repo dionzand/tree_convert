@@ -1,7 +1,7 @@
 import json
 import pandas as pd
 
-yfull_snps = pd.read_csv("yfull_snps.csv")
+yfull_snps = pd.read_csv("../data/yfull_snps.csv")
 
 print(yfull_snps.head())
 
@@ -23,5 +23,5 @@ for index, row in yfull_snps.iterrows():
         yfull_snp_to_hg_dict[snp].append(hg)
 
 # save to json
-json.dump(yfull_snp_to_hg_dict, open("yfull_snp_to_hg_dict.json", "w"))
-json.dump(yfull_hg_to_snp_dict, open("yfull_hg_to_snp_dict.json", "w"))
+json.dump(yfull_snp_to_hg_dict, open("../data/yfull_snp_to_hg_dict.json", "w"))
+json.dump(yfull_hg_to_snp_dict, open("../data/yfull_hg_to_snp_dict.json", "w"))

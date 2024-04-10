@@ -2,7 +2,7 @@
 
 import json
 
-isogg_tree = json.load(open("isogg_tree.json"))
+isogg_tree = json.load(open("../data/isogg_tree.json"))
 
 child_to_parent = {}
 

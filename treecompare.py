@@ -6,8 +6,8 @@ from collections import Counter
 
 import pandas as pd
 
-isogg_tree_json = json.load(open("isogg_tree.json"))
-yfull_tree_json = json.load(open("yfull_tree.json"))
+isogg_tree_json = json.load(open("data/isogg_tree.json"))
+yfull_tree_json = json.load(open("data/yfull_tree.json"))
 
 isogg_tree = nx.from_dict_of_lists(isogg_tree_json)
 yfull_tree = nx.from_dict_of_lists(yfull_tree_json)
@@ -15,11 +15,11 @@ yfull_tree = nx.from_dict_of_lists(yfull_tree_json)
 isogg_tree = nx.DiGraph(nx.dfs_tree(isogg_tree, source="ROOT (Y-Chromosome 'Adam')"))
 yfull_tree = nx.DiGraph(nx.dfs_tree(yfull_tree, source="ROOT (Y-Chromosome 'Adam')"))
 
-isogg_hg_to_snp_dict = json.load(open("isogg_hg_to_snp_dict.json"))
-yfull_hg_to_snp_dict = json.load(open("yfull_hg_to_snp_dict.json"))
+isogg_hg_to_snp_dict = json.load(open("data/isogg_hg_to_snp_dict.json"))
+yfull_hg_to_snp_dict = json.load(open("data/yfull_hg_to_snp_dict.json"))
 
-isogg_snp_to_hg_dict = json.load(open("isogg_snp_to_hg_dict.json"))
-yfull_snp_to_hg_dict = json.load(open("yfull_snp_to_hg_dict.json"))
+isogg_snp_to_hg_dict = json.load(open("data/isogg_snp_to_hg_dict.json"))
+yfull_snp_to_hg_dict = json.load(open("data/yfull_snp_to_hg_dict.json"))
 
 
 def get_path_to_root(tree, node):

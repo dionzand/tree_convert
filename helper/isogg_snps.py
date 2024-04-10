@@ -1,7 +1,7 @@
 import json
 import pandas as pd
 
-isogg_snp = pd.read_csv("isogg_snps.csv")
+isogg_snp = pd.read_csv("../data/isogg_snps.csv")
 
 isogg_snp_to_hg_dict = {}
 isogg_hg_to_snp_dict = {}
@@ -21,5 +21,5 @@ for index, row in isogg_snp.iterrows():
         isogg_snp_to_hg_dict[snp].append(hg)
 
 # save to json
-json.dump(isogg_snp_to_hg_dict, open("isogg_snp_to_hg_dict.json", "w"))
-json.dump(isogg_hg_to_snp_dict, open("isogg_hg_to_snp_dict.json", "w"))
+json.dump(isogg_snp_to_hg_dict, open("../data/isogg_snp_to_hg_dict.json", "w"))
+json.dump(isogg_hg_to_snp_dict, open("../data/isogg_hg_to_snp_dict.json", "w"))

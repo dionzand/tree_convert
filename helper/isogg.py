@@ -2,7 +2,7 @@ import json
 
 import pandas as pd
 
-isogg_snp = pd.read_csv("isogg_snps.csv")
+isogg_snp = pd.read_csv("../data/isogg_snps.csv")
 unique_subgroups = sorted(list(isogg_snp["Subgroup Name"].unique()))
 
 subsets = []
